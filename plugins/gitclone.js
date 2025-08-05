@@ -3,7 +3,7 @@
 //---------------------------------------------
 //  ⚠️ DO NOT MODIFY THIS FILE OR REMOVE THIS CREDIT⚠️  
 //---------------------------------------------
-
+const config = require('../settings');
 const { malvin } = require('../malvin');
 const fetch = require('node-fetch');
 const NodeCache = require('node-cache');
