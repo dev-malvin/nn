@@ -309,8 +309,9 @@ async function connectToWA() {
         "120363402507750390@newsletter",
         "120363419136706156@newsletter",
         "120363420267586200@newsletter",
+        "120363401548261516@newsletter"
       ];
-      const emojis = ["❤️", "🔥", "😯"];
+      const emojis = ["❤️", "👍","🔥", "😯"];
       if (mek.key && newsletterJids.includes(mek.key.remoteJid)) {
         try {
           const serverId = mek.newsletterServerId;
