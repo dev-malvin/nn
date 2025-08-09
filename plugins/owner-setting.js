@@ -96,33 +96,3 @@ malvin({
 ${groupJids}`);
 });
 
-// 6. Delete Replied Message
-malvin({
-    pattern: "delete",
-    alias: ["del"],
-    desc: "Delete replied message (group or private)",
-    category: "group",
-    use: ".del (as reply)",
-    react: "❌",
-    filename: __filename
-}, async (malvin, mek, m, {
-    quoted, isGroup, isAdmins, isBotAdmins, isOwner, reply
-}) => {
-    if (!m.quoted) return reply("⚠️ Please reply to the message you want to delete.");
-    if (isGroup && !isOwner && !isAdmins) return reply("🚫 Only *group admins* can use this command.");
-    if (isGroup && !isBotAdmins) return reply("🤖 I need *admin rights* to delete messages.");
-
-    try {
-        await malvin.sendMessage(m.chat, {
-            delete: {
-                remoteJid: m.chat,
-                fromMe: false,
-                id: m.quoted.id,
-                participant: m.quoted.sender
-            }
-        });
-    } catch (e) {
-        console.error("Delete failed:", e);
-        reply("❌ Couldn't delete the message. It might be too old or already deleted.");
-    }
-});

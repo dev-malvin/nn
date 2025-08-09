@@ -5,15 +5,17 @@
 //---------------------------------------------------------------------------
 const { malvin, commands } = require('../malvin');
 const config = require('../settings');
-const prefix = config.PREFIX
-const os = require('os');;
+const prefix = config.PREFIX;
+const os = require('os');
 const fs = require('fs');
 const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, sleep, fetchJson } = require('../lib/functions2');
 const { exec } = require('child_process');
 const { writeFileSync } = require('fs');
 const path = require('path');
 const { setConfig, getConfig } = require("../lib/configdb");
-
+const { setPrefix } = require('../lib/prefix');
+const axios = require('axios');
+const FormData = require('form-data');
 
 malvin({
     pattern: "admin-events",
@@ -22,18 +24,18 @@ malvin({
     category: "settings",
     filename: __filename
 },
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
     if (status === "on") {
         config.ADMIN_EVENTS = "true";
-        return reply("✅ Admin event notifications are now enabled.");
+        return reply("*✅ ᴀᴅᴍɪɴ ᴇᴠᴇɴᴛ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴs ᴀʀᴇ ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
     } else if (status === "off") {
         config.ADMIN_EVENTS = "false";
-        return reply("❌ Admin event notifications are now disabled.");
+        return reply("*❌ ᴀᴅᴍɪɴ ᴇᴠᴇɴᴛ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴs ᴀʀᴇ ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`Example: .admin-events on`);
+        return reply("*❌ ᴇxᴀᴍᴘʟᴇ: .ᴀᴅᴍɪɴ-ᴇᴠᴇɴᴛs ᴏɴ*");
     }
 });
 
@@ -48,21 +50,16 @@ async (malvin, mek, m, { from, args, isOwner, reply }) => {
     if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    // Default value for FAKE_TYPING is "false"
-    if (args[0] === "on") {
+    if (status === "on") {
         config.FAKE_TYPING = "true";
-        return reply("Fake Typing is now enabled.");
-    } else if (args[0] === "off") {
+        return reply("*✅ ғᴀᴋᴇ ᴛʏᴘɪɴɢ ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+    } else if (status === "off") {
         config.FAKE_TYPING = "false";
-        return reply("fake typing is now disabled.");
+        return reply("*❌ ғᴀᴋᴇ ᴛʏᴘɪɴɢ ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`Example: .faketyping on`);
+        return reply("*❌ ᴇxᴀᴍᴘʟᴇ: .ғᴀᴋᴇᴛʏᴘɪɴɢ ᴏɴ*");
     }
 });
-
-//--------------------------------------------
-//  FAKE RECORDING COMMANDS
-//--------------------------------------------
 
 malvin({
     pattern: "fakerecording",
@@ -75,15 +72,14 @@ async (malvin, mek, m, { from, args, isOwner, reply }) => {
     if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    // Default value for FAKE_RECORDING is "false"
-    if (args[0] === "on") {
+    if (status === "on") {
         config.FAKE_RECORDING = "true";
-        return reply("fake recording of status is now enabled.");
-    } else if (args[0] === "off") {
+        return reply("*✅ ғᴀᴋᴇ ʀᴇᴄᴏʀᴅɪɴɢ ᴏғ sᴛᴀᴛᴜs ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+    } else if (status === "off") {
         config.FAKE_RECORDING = "false";
-        return reply("fake recording of status is now disabled.");
+        return reply("*❌ ғᴀᴋᴇ ʀᴇᴄᴏʀᴅɪɴɢ ᴏғ sᴛᴀᴛᴜs ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`Example: .fakerecording on`);
+        return reply("*❌ ᴇxᴀᴍᴘʟᴇ: .ғᴀᴋᴇʀᴇᴄᴏʀᴅɪɴɢ ᴏɴ*");
     }
 });
 
@@ -94,22 +90,20 @@ malvin({
     category: "settings",
     filename: __filename
 },
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
     if (status === "on") {
         config.WELCOME = "true";
-        return reply("✅ Welcome messages are now enabled.");
+        return reply("*✅ ᴡᴇʟᴄᴏᴍᴇ ᴍᴇssᴀɢᴇs ᴀʀᴇ ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
     } else if (status === "off") {
         config.WELCOME = "false";
-        return reply("❌ Welcome messages are now disabled.");
+        return reply("*❌ ᴡᴇʟᴄᴏᴍᴇ ᴍᴇssᴀɢᴇs ᴀʀᴇ ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`Example: .welcome on`);
+        return reply("*❌ ᴇxᴀᴍᴘʟᴇ: .ᴡᴇʟᴄᴏᴍᴇ ᴏɴ*");
     }
 });
-
-
 
 malvin({
     pattern: "mode",
@@ -118,24 +112,23 @@ malvin({
     desc: "Set bot mode to private or public.",
     category: "settings",
     filename: __filename,
-}, async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 Only the owner can use this command!*");
+}, async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
-    // Si aucun argument n'est fourni, afficher le mode actuel et l'usage
     if (!args[0]) {
-        return reply(`📌 Current mode: *${config.MODE}*\n\nUsage: .mode private OR .mode public`);
+        return reply(`*❌ ᴄᴜʀʀᴇɴᴛ ᴍᴏᴅᴇ: ${config.MODE}*\n\n*usage: .mode private or .mode public')}*`);
     }
-
+   
     const modeArg = args[0].toLowerCase();
 
     if (modeArg === "private") {
         config.MODE = "private";
-        return reply("✅ Bot mode is now set to *PRIVATE*.");
+        return reply("*✅ ʙᴏᴛ ᴍᴏᴅᴇ ɪs ɴᴏᴡ sᴇᴛ ᴛᴏ ᴘʀɪᴠᴀᴛᴇ.*");
     } else if (modeArg === "public") {
         config.MODE = "public";
-        return reply("✅ Bot mode is now set to *PUBLIC*.");
+        return reply("*✅ ʙᴏᴛ ᴍᴏᴅᴇ ɪs ɴᴏᴡ sᴇᴛ ᴛᴏ ᴘᴜʙʟɪᴄ.*");
     } else {
-        return reply("❌ Invalid mode. Please use `.mode private` or `.mode public`.");
+        return reply("*❌ ɪɴᴠᴀʟɪᴅ ᴍᴏᴅᴇ. ᴘʟᴇᴀsᴇ ᴜsᴇ .ᴍᴏᴅᴇ ᴘʀɪᴠᴀᴛᴇ ᴏʀ .ᴍᴏᴅᴇ ᴘᴜʙʟɪᴄ*");
     }
 });
 
@@ -145,20 +138,17 @@ malvin({
     category: "settings",
     filename: __filename
 },    
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
     if (!["on", "off"].includes(status)) {
-        return reply("*🫟 ᴇxᴀᴍᴘʟᴇ:  .ᴀᴜᴛᴏ-ᴛʏᴘɪɴɢ ᴏɴ*");
+        return reply("*🫟 ᴇxᴀᴍᴘʟᴇ: .ᴀᴜᴛᴏ-ᴛʏᴘɪɴɢ ᴏɴ*");
     }
 
     config.AUTO_TYPING = status === "on" ? "true" : "false";
-    return reply(`Auto typing has been turned ${status}.`);
+    return reply(`*✅ ᴀᴜᴛᴏ-ᴛʏᴘɪɴɢ ʜᴀs ʙᴇᴇɴ ᴛᴜʀɴᴇᴅ ${status}.*`);
 });
-
-//mention reply 
-
 
 malvin({
     pattern: "mention-reply",
@@ -167,26 +157,21 @@ malvin({
     category: "settings",
     filename: __filename
 },    
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    // Check the argument for enabling or disabling the anticall feature
-    if (args[0] === "on") {
+    if (status === "on") {
         config.MENTION_REPLY = "true";
-        return reply("Mention Reply feature is now enabled.");
-    } else if (args[0] === "off") {
+        return reply("*✅ ᴍᴇɴᴛɪᴏɴ ʀᴇᴘʟʏ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+    } else if (status === "off") {
         config.MENTION_REPLY = "false";
-        return reply("Mention Reply feature is now disabled.");
+        return reply("*❌ ᴍᴇɴᴛɪᴏɴ ʀᴇᴘʟʏ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`_example:  .mee on_`);
+        return reply("*❌ ᴇxᴀᴍᴘʟᴇ: .ᴍᴇᴇ ᴏɴ*");
     }
 });
 
-
-//--------------------------------------------
-// ALWAYS_ONLINE COMMANDS
-//--------------------------------------------
 malvin({
     pattern: "always-online",
     alias: ["alwaysonline"],
@@ -194,24 +179,21 @@ malvin({
     category: "settings",
     filename: __filename
 },
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
     if (status === "on") {
         config.ALWAYS_ONLINE = "true";
-        await reply("*✅ always online mode is now enabled.*");
+        await reply("*✅ ᴀʟᴡᴀʏs ᴏɴʟɪɴᴇ ᴍᴏᴅᴇ ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
     } else if (status === "off") {
         config.ALWAYS_ONLINE = "false";
-        await reply("*❌ always online mode is now disabled.*");
+        await reply("*❌ ᴀʟᴡᴀʏs ᴏɴʟɪɴᴇ ᴍᴏᴅᴇ ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        await reply(`*🛠️ ᴇxᴀᴍᴘʟᴇ: .ᴀʟᴡᴀʏs-ᴏɴʟɪɴᴇ ᴏɴ*`);
+        await reply("*🛠️ ᴇxᴀᴍᴘʟᴇ: .ᴀʟᴡᴀʏs-ᴏɴʟɪɴᴇ ᴏɴ*");
     }
 });
 
-//--------------------------------------------
-//  AUTO_RECORDING COMMANDS
-//--------------------------------------------
 malvin({
     pattern: "auto-recording",
     alias: ["autorecoding"],
@@ -219,8 +201,8 @@ malvin({
     category: "settings",
     filename: __filename
 },    
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
     if (!["on", "off"].includes(status)) {
@@ -230,15 +212,13 @@ async (malvin, mek, m, { from, args, isCreator, reply }) => {
     config.AUTO_RECORDING = status === "on" ? "true" : "false";
     if (status === "on") {
         await malvin.sendPresenceUpdate("recording", from);
-        return reply("Auto recording is now enabled. Bot is recording...");
+        return reply("*✅ ᴀᴜᴛᴏ ʀᴇᴄᴏʀᴅɪɴɢ ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ. ʙᴏᴛ ɪs ʀᴇᴄᴏʀᴅɪɴɢ...*");
     } else {
         await malvin.sendPresenceUpdate("available", from);
-        return reply("Auto recording has been disabled.");
+        return reply("*❌ ᴀᴜᴛᴏ ʀᴇᴄᴏʀᴅɪɴɢ ʜᴀs ʙᴇᴇɴ ᴅɪsᴀʙʟᴇᴅ.*");
     }
 });
-//--------------------------------------------
-// AUTO_VIEW_STATUS COMMANDS
-//--------------------------------------------
+
 malvin({
     pattern: "auto-seen",
     alias: ["autostatusview"],
@@ -246,24 +226,21 @@ malvin({
     category: "settings",
     filename: __filename
 },    
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    // Default value for AUTO_VIEW_STATUS is "false"
-    if (args[0] === "on") {
+    if (status === "on") {
         config.AUTO_STATUS_SEEN = "true";
-        return reply("Auto-viewing of statuses is now enabled.");
-    } else if (args[0] === "off") {
+        return reply("*✅ ᴀᴜᴛᴏ-ᴠɪᴇᴡɪɴɢ ᴏғ sᴛᴀᴛᴜsᴇs ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+    } else if (status === "off") {
         config.AUTO_STATUS_SEEN = "false";
-        return reply("Auto-viewing of statuses is now disabled.");
+        return reply("*❌ ᴀᴜᴛᴏ-ᴠɪᴇᴡɪɴɢ ᴏғ sᴛᴀᴛᴜsᴇs ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`*🫟 ᴇxᴀᴍᴘʟᴇ:  .ᴀᴜᴛᴏ-sᴇᴇɴ ᴏɴ*`);
+        return reply("*🫟 ᴇxᴀᴍᴘʟᴇ: .ᴀᴜᴛᴏ-sᴇᴇɴ ᴏɴ*");
     }
-}); 
-//--------------------------------------------
-// AUTO_LIKE_STATUS COMMANDS
-//--------------------------------------------
+});
+
 malvin({
     pattern: "status-react",
     alias: ["statusreaction"],
@@ -271,25 +248,21 @@ malvin({
     category: "settings",
     filename: __filename
 },    
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    // Default value for AUTO_LIKE_STATUS is "false"
-    if (args[0] === "on") {
+    if (status === "on") {
         config.AUTO_STATUS_REACT = "true";
-        return reply("Auto-liking of statuses is now enabled.");
-    } else if (args[0] === "off") {
+        return reply("*✅ ᴀᴜᴛᴏ-ʟɪᴋɪɴɢ ᴏғ sᴛᴀᴛᴜsᴇs ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+    } else if (status === "off") {
         config.AUTO_STATUS_REACT = "false";
-        return reply("Auto-liking of statuses is now disabled.");
+        return reply("*❌ ᴀᴜᴛᴏ-ʟɪᴋɪɴɢ ᴏғ sᴛᴀᴛᴜsᴇs ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`Example: . status-react on`);
+        return reply("*❌ ᴇxᴀᴍᴘʟᴇ: .sᴛᴀᴛᴜs-ʀᴇᴀᴄᴛ ᴏɴ*");
     }
 });
 
-//--------------------------------------------
-//  READ-MESSAGE COMMANDS
-//--------------------------------------------
 malvin({
     pattern: "read-message",
     alias: ["autoread"],
@@ -297,76 +270,65 @@ malvin({
     category: "settings",
     filename: __filename
 },    
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    // Check the argument for enabling or disabling the anticall feature
-    if (args[0] === "on") {
+    if (status === "on") {
         config.READ_MESSAGE = "true";
-        return reply("readmessage feature is now enabled.");
-    } else if (args[0] === "off") {
+        return reply("*✅ ʀᴇᴀᴅᴍᴇssᴀɢᴇ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+    } else if (status === "off") {
         config.READ_MESSAGE = "false";
-        return reply("readmessage feature is now disabled.");
+        return reply("*❌ ʀᴇᴀᴅᴍᴇssᴀɢᴇ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`_example:  .readmessage on_`);
+        return reply("*❌ ᴇxᴀᴍᴘʟᴇ: .ʀᴇᴀᴅ-ᴍᴇssᴀɢᴇ ᴏɴ*");
     }
 });
-
-// AUTO_VOICE
 
 malvin({
     pattern: "auto-voice",
     alias: ["autovoice"],
-    desc: "enable or disable readmessage.",
+    desc: "enable or disable auto-voice.",
     category: "settings",
     filename: __filename
 },    
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    // Check the argument for enabling or disabling the anticall feature
-    if (args[0] === "on") {
+    if (status === "on") {
         config.AUTO_VOICE = "true";
-        return reply("AUTO_VOICE feature is now enabled.");
-    } else if (args[0] === "off") {
+        return reply("*✅ ᴀᴜᴛᴏ_ᴠᴏɪᴄᴇ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+    } else if (status === "off") {
         config.AUTO_VOICE = "false";
-        return reply("AUTO_VOICE feature is now disabled.");
+        return reply("*❌ ᴀᴜᴛᴏ_ᴠᴏɪᴄᴇ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`_example:  .autovoice on_`);
+        return reply("*❌ ᴇxᴀᴍᴘʟᴇ: .ᴀᴜᴛᴏ-ᴠᴏɪᴄᴇ ᴏɴ*");
     }
 });
 
-
-//--------------------------------------------
-//  ANI-BAD COMMANDS
-//--------------------------------------------
 malvin({
     pattern: "anti-bad",
     alias: ["antibadword"],
-    desc: "enable or disable antibad.",
+    desc: "enable or disable anti-bad.",
     category: "settings",
     filename: __filename
 },    
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    // Check the argument for enabling or disabling the anticall feature
-    if (args[0] === "on") {
+    if (status === "on") {
         config.ANTI_BAD_WORD = "true";
-        return reply("*anti bad word is now enabled.*");
-    } else if (args[0] === "off") {
+        return reply("*✅ ᴀɴᴛɪ ʙᴀᴅ ᴡᴏʀᴅ ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+    } else if (status === "off") {
         config.ANTI_BAD_WORD = "false";
-        return reply("*anti bad word feature is now disabled*");
+        return reply("*❌ ᴀɴᴛɪ ʙᴀᴅ ᴡᴏʀᴅ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`_example:  .antibad on_`);
+        return reply("*❌ ᴇxᴀᴍᴘʟᴇ: .ᴀɴᴛɪ-ʙᴀᴅ ᴏɴ*");
     }
 });
-//--------------------------------------------
-//  AUTO-STICKER COMMANDS
-//--------------------------------------------
+
 malvin({
     pattern: "auto-sticker",
     alias: ["autosticker"],
@@ -374,24 +336,21 @@ malvin({
     category: "settings",
     filename: __filename
 },    
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    // Check the argument for enabling or disabling the anticall feature
-    if (args[0] === "on") {
+    if (status === "on") {
         config.AUTO_STICKER = "true";
-        return reply("auto-sticker feature is now enabled.");
-    } else if (args[0] === "off") {
+        return reply("*✅ ᴀᴜᴛᴏ-sᴛɪᴄᴋᴇʀ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+    } else if (status === "off") {
         config.AUTO_STICKER = "false";
-        return reply("auto-sticker feature is now disabled.");
+        return reply("*❌ ᴀᴜᴛᴏ-sᴛɪᴄᴋᴇʀ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`_example:  .auto-sticker on_`);
+        return reply("*❌ ᴇxᴀᴍᴘʟᴇ: .ᴀᴜᴛᴏ-sᴛɪᴄᴋᴇʀ ᴏɴ*");
     }
 });
-//--------------------------------------------
-//  AUTO-REPLY COMMANDS
-//--------------------------------------------
+
 malvin({
     pattern: "auto-reply",
     alias: ["autoreply"],
@@ -399,25 +358,21 @@ malvin({
     category: "settings",
     filename: __filename
 },    
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    // Check the argument for enabling or disabling the anticall feature
-    if (args[0] === "on") {
+    if (status === "on") {
         config.AUTO_REPLY = "true";
-        return reply("*auto-reply  is now enabled.*");
-    } else if (args[0] === "off") {
+        return reply("*✅ ᴀᴜᴛᴏ-ʀᴇᴘʟʏ ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+    } else if (status === "off") {
         config.AUTO_REPLY = "false";
-        return reply("auto-reply feature is now disabled.");
+        return reply("*❌ ᴀᴜᴛᴏ-ʀᴇᴘʟʏ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`*🫟 ᴇxᴀᴍᴘʟᴇ: . ᴀᴜᴛᴏ-ʀᴇᴘʟʏ ᴏɴ*`);
+        return reply("*🫟 ᴇxᴀᴍᴘʟᴇ: .ᴀᴜᴛᴏ-ʀᴇᴘʟʏ ᴏɴ*");
     }
 });
 
-//--------------------------------------------
-//   AUTO-REACT COMMANDS
-//--------------------------------------------
 malvin({
     pattern: "auto-react",
     alias: ["autoreact"],
@@ -425,24 +380,21 @@ malvin({
     category: "settings",
     filename: __filename
 },    
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    // Check the argument for enabling or disabling the anticall feature
-    if (args[0] === "on") {
+    if (status === "on") {
         config.AUTO_REACT = "true";
-        await reply("*autoreact feature is now enabled.*");
-    } else if (args[0] === "off") {
+        await reply("*✅ ᴀᴜᴛᴏʀᴇᴀᴄᴛ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+    } else if (status === "off") {
         config.AUTO_REACT = "false";
-        await reply("autoreact feature is now disabled.");
+        await reply("*❌ ᴀᴜᴛᴏʀᴇᴀᴄᴛ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        await reply(`*🫟 ᴇxᴀᴍᴘʟᴇ: .ᴀᴜᴛᴏ-ʀᴇᴀᴄᴛ ᴏɴ*`);
+        await reply("*🫟 ᴇxᴀᴍᴘʟᴇ: .ᴀᴜᴛᴏ-ʀᴇᴀᴄᴛ ᴏɴ*");
     }
 });
-//--------------------------------------------
-//  STATUS-REPLY COMMANDS
-//--------------------------------------------
+
 malvin({
     pattern: "status-reply",
     alias: ["autostatusreply"],
@@ -450,108 +402,101 @@ malvin({
     category: "settings",
     filename: __filename
 },    
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    // Check the argument for enabling or disabling the anticall feature
-    if (args[0] === "on") {
+    if (status === "on") {
         config.AUTO_STATUS_REPLY = "true";
-        return reply("status-reply feature is now enabled.");
-    } else if (args[0] === "off") {
+        return reply("*✅ sᴛᴀᴛᴜs-ʀᴇᴘʟʏ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+    } else if (status === "off") {
         config.AUTO_STATUS_REPLY = "false";
-        return reply("status-reply feature is now disabled.");
+        return reply("*❌ sᴛᴀᴛᴜs-ʀᴇᴘʟʏ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`*🫟 ᴇxᴀᴍᴘʟᴇ:  .sᴛᴀᴛᴜs-ʀᴇᴘʟʏ ᴏɴ*`);
+        return reply("*🫟 ᴇxᴀᴍᴘʟᴇ: .sᴛᴀᴛᴜs-ʀᴇᴘʟʏ ᴏɴ*");
     }
-});
-
-//--------------------------------------------
-//  ANTILINK COMMANDS
-//--------------------------------------------
-
-malvin({
-  pattern: "antilink",
-  alias: ["antilinks"],
-  desc: "Enable or disable ANTI_LINK in groups",
-  category: "group",
-  react: "🚫",
-  filename: __filename
-}, async (malvin, mek, m, { isGroup, isAdmins, isBotAdmins, args, reply }) => {
-  try {
-    if (!isGroup) return reply('This command can only be used in a group.');
-    if (!isBotAdmins) return reply('Bot must be an admin to use this command.');
-    if (!isAdmins) return reply('You must be an admin to use this command.');
-
-    if (args[0] === "on") {
-      config.ANTI_LINK = "true";
-      reply("✅ ANTI_LINK has been enabled.");
-    } else if (args[0] === "off") {
-      config.ANTI_LINK = "false";
-      reply("❌ ANTI_LINK has been disabled.");
-    } else {
-      reply("Usage: *.antilink on/off*");
-    }
-  } catch (e) {
-    reply(`Error: ${e.message}`);
-  }
 });
 
 malvin({
-  pattern: "antilinkkick",
-  alias: ["kicklink"],
-  desc: "Enable or disable ANTI_LINK_KICK in groups",
-  category: "group",
-  react: "⚠️",
-  filename: __filename
+    pattern: "antilink",
+    alias: ["antilinks"],
+    desc: "Enable or disable ANTI_LINK in groups",
+    category: "group",
+    react: "🚫",
+    filename: __filename
 }, async (malvin, mek, m, { isGroup, isAdmins, isBotAdmins, args, reply }) => {
-  try {
-    if (!isGroup) return reply('This command can only be used in a group.');
-    if (!isBotAdmins) return reply('Bot must be an admin to use this command.');
-    if (!isAdmins) return reply('You must be an admin to use this command.');
+    try {
+        if (!isGroup) return reply("*❌ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ᴏɴʟʏ ʙᴇ ᴜsᴇᴅ ɪɴ ᴀ ɢʀᴏᴜᴘ.*");
+        if (!isBotAdmins) return reply("*❌ ʙᴏᴛ ᴍᴜsᴛ ʙᴇ ᴀɴ ᴀᴅᴍɪɴ ᴛᴏ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ.*");
+        if (!isAdmins) return reply("*❌ ʏᴏᴜ ᴍᴜsᴛ ʙᴇ ᴀɴ ᴀᴅᴍɪɴ ᴛᴏ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ.*");
 
-    if (args[0] === "on") {
-      config.ANTI_LINK_KICK = "true";
-      reply("✅ ANTI_LINK_KICK has been enabled.");
-    } else if (args[0] === "off") {
-      config.ANTI_LINK_KICK = "false";
-      reply("❌ ANTI_LINK_KICK has been disabled.");
-    } else {
-      reply("Usage: *.antilinkkick on/off*");
+        if (args[0] === "on") {
+            config.ANTI_LINK = "true";
+            return reply("*✅ ᴀɴᴛɪ_ʟɪɴᴋ ʜᴀs ʙᴇᴇɴ ᴇɴᴀʙʟᴇᴅ.*");
+        } else if (args[0] === "off") {
+            config.ANTI_LINK = "false";
+            return reply("*❌ ᴀɴᴛɪ_ʟɪɴᴋ ʜᴀs ʙᴇᴇɴ ᴅɪsᴀʙʟᴇᴅ.*");
+        } else {
+            return reply("*❌ ᴜsᴀɢᴇ: .ᴀɴᴛɪʟɪɴᴋ ᴏɴ/ᴏғғ*");
+        }
+    } catch (e) {
+        return reply(`*❌ ᴇʀʀᴏʀ: ${e.message}*`);
     }
-  } catch (e) {
-    reply(`Error: ${e.message}`);
-  }
 });
-
 
 malvin({
-  pattern: "deletelink",
-  alias: ["linksdelete"],
-  desc: "Enable or disable DELETE_LINKS in groups",
-  category: "group",
-  react: "❌",
-  filename: __filename
+    pattern: "antilinkkick",
+    alias: ["kicklink"],
+    desc: "Enable or disable ANTI_LINK_KICK in groups",
+    category: "group",
+    react: "⚠️",
+    filename: __filename
 }, async (malvin, mek, m, { isGroup, isAdmins, isBotAdmins, args, reply }) => {
-  try {
-    if (!isGroup) return reply('This command can only be used in a group.');
-    if (!isBotAdmins) return reply('Bot must be an admin to use this command.');
-    if (!isAdmins) return reply('You must be an admin to use this command.');
+    try {
+        if (!isGroup) return reply("*❌ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ᴏɴʟʏ ʙᴇ ᴜsᴇᴅ ɪɴ ᴀ ɢʀᴏᴜᴘ.*");
+        if (!isBotAdmins) return reply("*❌ ʙᴏᴛ ᴍᴜsᴛ ʙᴇ ᴀɴ ᴀᴅᴍɪɴ ᴛᴏ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ.*");
+        if (!isAdmins) return reply("*❌ ʏᴏᴜ ᴍᴜsᴛ ʙᴇ ᴀɴ ᴀᴅᴍɪɴ ᴛᴏ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ.*");
 
-    if (args[0] === "on") {
-      config.DELETE_LINKS = "true";
-      reply("✅ DELETE_LINKS is now enabled.");
-    } else if (args[0] === "off") {
-      config.DELETE_LINKS = "false";
-      reply("❌ DELETE_LINKS is now disabled.");
-    } else {
-      reply("Usage: *.deletelink on/off*");
+        if (args[0] === "on") {
+            config.ANTI_LINK_KICK = "true";
+            return reply("*✅ ᴀɴᴛɪ_ʟɪɴᴋ_ᴋɪᴄᴋ ʜᴀs ʙᴇᴇɴ ᴇɴᴀʙʟᴇᴅ.*");
+        } else if (args[0] === "off") {
+            config.ANTI_LINK_KICK = "false";
+            return reply("*❌ ᴀɴᴛɪ_ʟɪɴᴋ_ᴋɪᴄᴋ ʜᴀs ʙᴇᴇɴ ᴅɪsᴀʙʟᴇᴅ.*");
+        } else {
+            return reply("*❌ ᴜsᴀɢᴇ: .ᴀɴᴛɪʟɪɴᴋᴋɪᴄᴋ ᴏɴ/ᴏғғ*");
+        }
+    } catch (e) {
+        return reply(`*❌ ᴇʀʀᴏʀ: ${e.message}*`);
     }
-  } catch (e) {
-    reply(`Error: ${e.message}`);
-  }
 });
 
+malvin({
+    pattern: "deletelink",
+    alias: ["linksdelete"],
+    desc: "Enable or disable DELETE_LINKS in groups",
+    category: "group",
+    react: "❌",
+    filename: __filename
+}, async (malvin, mek, m, { isGroup, isAdmins, isBotAdmins, args, reply }) => {
+    try {
+        if (!isGroup) return reply("*❌ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ᴏɴʟʏ ʙᴇ ᴜsᴇᴅ ɪɴ ᴀ ɢʀᴏᴜᴘ.*");
+        if (!isBotAdmins) return reply("*❌ ʙᴏᴛ ᴍᴜsᴛ ʙᴇ ᴀɴ ᴀᴅᴍɪɴ ᴛᴏ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ.*");
+        if (!isAdmins) return reply("*❌ ʏᴏᴜ ᴍᴜsᴛ ʙᴇ ᴀɴ ᴀᴅᴍɪɴ ᴛᴏ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ.*");
+
+        if (args[0] === "on") {
+            config.DELETE_LINKS = "true";
+            return reply("*✅ ᴅᴇʟᴇᴛᴇ_ʟɪɴᴋs ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+        } else if (args[0] === "off") {
+            config.DELETE_LINKS = "false";
+            return reply("*❌ ᴅᴇʟᴇᴛᴇ_ʟɪɴᴋs ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
+        } else {
+            return reply("*❌ ᴜsᴀɢᴇ: .ᴅᴇʟᴇᴛᴇʟɪɴᴋ ᴏɴ/ᴏғғ*");
+        }
+    } catch (e) {
+        return reply(`*❌ ᴇʀʀᴏʀ: ${e.message}*`);
+    }
+});
 
 malvin({
     pattern: "setvar",
@@ -561,98 +506,97 @@ malvin({
     category: "settings",
     filename: __filename,
 }, async (malvin, mek, m, { from, isOwner, reply }) => {
-    if (!isOwner) return reply("*📛 Only the owner can use this command!*");
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const malvinList = `
-╭━━━〔 *🛠️ ᴍᴀʟᴠɪɴ-ᴠ3 sᴇᴛᴛɪɴɢs* 〕━━⬣
+*╭━━━〔 🛠️ ᴍᴀʟᴠɪɴ-ᴠ3 sᴇᴛᴛɪɴɢs 〕━━⬣*
 
-🔧 *1.*  *ᴍᴏᴅᴇ* :
-   ┗ Status: ${config.MODE || "public"}
-   ┗ Usage: ${config.PREFIX}mode private/public
+*🔧 1.*  *ᴍᴏᴅᴇ* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.MODE || "public"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}mode private/public
 
-🎯 *2.*  *ᴀᴜᴛᴏ ᴛʏᴘɪɴɢ* :
-   ┗ Status: ${config.AUTO_TYPING || "off"}
-   ┗ Usage: ${config.PREFIX}autotyping on/off
+*🎯 2.*  *ᴀᴜᴛᴏ ᴛʏᴘɪɴɢ* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.AUTO_TYPING || "off"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}autotyping on/off
 
-🌐 *3.*  *ᴀʟᴡᴀʏs ᴏɴʟɪɴᴇ* :
-   ┗ Status: ${config.ALWAYS_ONLINE || "off"}
-   ┗ Usage: ${config.PREFIX}alwaysonline on/off
+*🌐 3.*  *ᴀʟᴡᴀʏs ᴏɴʟɪɴᴇ* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.ALWAYS_ONLINE || "off"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}alwaysonline on/off
 
-🎙️ *4.*  *ᴀᴜᴛᴏ ʀᴇᴄᴏʀᴅɪɴɢ* :
-   ┗ Status: ${config.AUTO_RECORDING || "off"}
-   ┗ Usage: ${config.PREFIX}autorecording on/off
+*🎙️ 4.*  *ᴀᴜᴛᴏ ʀᴇᴄᴏʀᴅɪɴɢ* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.AUTO_RECORDING || "off"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}autorecording on/off
 
-📖 *5.*  *ᴀᴜᴛᴏ ʀᴇᴀᴅ sᴛᴀᴛᴜs* :
-   ┗ Status: ${config.AUTO_STATUS_REACT || "off"}
-   ┗ Usage: ${config.PREFIX}autoreadstatus on/off
+*📖 5.*  *ᴀᴜᴛᴏ ʀᴇᴀᴅ sᴛᴀᴛᴜs* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.AUTO_STATUS_REACT || "off"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}autoreadstatus on/off
 
-🚫 *6.*  *ᴀɴᴛɪ ʙᴀᴅ ᴡᴏʀᴅ* :
-   ┗ Status: ${config.ANTI_BAD_WORD || "off"}
-   ┗ Usage: ${config.PREFIX}antibad on/off
+*🚫 6.*  *ᴀɴᴛɪ ʙᴀᴅ ᴡᴏʀᴅ* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.ANTI_BAD_WORD || "off"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}antibad on/off
 
-🗑️ *7.*  *ᴀɴᴛɪ ᴅᴇʟᴇᴛᴇ* :
-   ┗ Status: ${config.ANTI_DELETE || "off"}
-   ┗ Usage: ${config.PREFIX}antidelete on/off
+*🗑️ 7.*  *ᴀɴᴛɪ ᴅᴇʟᴇᴛᴇ* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.ANTI_DELETE || "off"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}antidelete on/off
 
-🖼️ *8.*  *ᴀᴜᴛᴏ sᴛɪᴄᴋᴇʀ* :
-   ┗ Status: ${config.AUTO_STICKER || "off"}
-   ┗ Usage: ${config.PREFIX}autosticker on/off
+*🖼️ 8.*  *ᴀᴜᴛᴏ sᴛɪᴄᴋᴇʀ* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.AUTO_STICKER || "off"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}autosticker on/off
 
-💬 *9.*  *ᴀᴜᴛᴏ ʀᴇᴘʟʏ* :
-   ┗ Status: ${config.AUTO_REPLY || "off"}
-   ┗ Usage: ${config.PREFIX}autoreply on/off
+*💬 9.*  *ᴀᴜᴛᴏ ʀᴇᴘʟʏ* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.AUTO_REPLY || "off"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}autoreply on/off
 
-❤️ *10.* *ᴀᴜᴛᴏ ʀᴇᴀᴄᴛ* :
-   ┗ Status: ${config.AUTO_REACT || "off"}
-   ┗ Usage: ${config.PREFIX}autoreact on/off
+*❤️ 10.* *ᴀᴜᴛᴏ ʀᴇᴀᴄᴛ* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.AUTO_REACT || "off"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}autoreact on/off
 
-📢 *11.* *sᴛᴀᴛᴜs ʀᴇᴘʟʏ* :
-   ┗ Status: ${config.AUTO_STATUS_REPLY || "off"}
-   ┗ Usage: ${config.PREFIX}autostatusreply on/off
+*📢 11.* *sᴛᴀᴛᴜs ʀᴇᴘʟʏ* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.AUTO_STATUS_REPLY || "off"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}autostatusreply on/off
 
-🔗 *12.* *ᴀɴᴛɪ ʟɪɴᴋ* :
-   ┗ Status: ${config.ANTI_LINK || "off"}
-   ┗ Usage: ${config.PREFIX}antilink on/off
+*🔗 12.* *ᴀɴᴛɪ ʟɪɴᴋ* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.ANTI_LINK || "off"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}antilink on/off
 
-🤖 *13.* *ᴀɴᴛɪ ʙᴏᴛ* :
-   ┗ Status: ${config.ANTI_BOT || "off"}
-   ┗ Usage: ${config.PREFIX}antibot off/warn/delete/kick
+*🤖 13.* *ᴀɴᴛɪ ʙᴏᴛ* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.ANTI_BOT || "off"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}antibot off/warn/delete/kick
 
-💖 *14.* *ʜᴇᴀʀᴛ ʀᴇᴀᴄᴛ* :
-   ┗ Status: ${config.HEART_REACT || "off"}
-   ┗ Usage: ${config.PREFIX}heartreact on/off
+*💖 14.* *ʜᴇᴀʀᴛ ʀᴇᴀᴄᴛ* :
+   ┗ *sᴛᴀᴛᴜs*: ${config.HEART_REACT || "off"}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}heartreact on/off
 
-🧩 *15.* *sᴇᴛ ᴘʀᴇғɪx* :
-   ┗ Current: ${config.PREFIX || "."}
-   ┗ Usage: ${config.PREFIX}setprefix <new_prefix>
+*🧩 15.* *sᴇᴛ ᴘʀᴇғɪx* :
+   ┗ *ᴄᴜʀʀᴇɴᴛ*: ${config.PREFIX || "."}
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}setprefix <new_prefix>
 
-📊 *16.* *ᴘᴏʟʟ ᴄᴍᴅ* :
-   ┗ Usage: ${config.PREFIX}poll question;option1,option2,...
+*📊 16.* *ᴘᴏʟʟ ᴄᴍᴅ* :
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}poll question;option1,option2,...
 
-💞 *17.* *ʀᴀɴᴅᴏᴍ sʜɪᴘ* :
-   ┗ Usage: ${config.PREFIX}randomship
+*💞 17.* *ʀᴀɴᴅᴏᴍ sʜɪᴘ* :
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}randomship
 
-👥 *18.* *ɴᴇᴡ ɢʀᴏᴜᴘ* :
-   ┗ Usage: ${config.PREFIX}newgc group_name;num1,num2,...
+*👥 18.* *ɴᴇᴡ ɢʀᴏᴜᴘ* :
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}newgc group_name;num1,num2,...
 
-🚪 *19.* *ᴇxɪᴛ ɢʀᴏᴜᴘ* :
-   ┗ Usage: ${config.PREFIX}exit
+*🚪 19.* *ᴇxɪᴛ ɢʀᴏᴜᴘ* :
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}exit
 
-🔗 *20.* *ɪɴᴠɪᴛᴇ ʟɪɴᴋ* :
-   ┗ Usage: ${config.PREFIX}invite2
+*🔗 20.* *ɪɴᴠɪᴛᴇ ʟɪɴᴋ* :
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}invite2
 
-📢 *21.* *ʙʀᴏᴀᴅᴄᴀsᴛ* :
-   ┗ Usage: ${config.PREFIX}broadcast <text>
+*📢 21.* *ʙʀᴏᴀᴅᴄᴀsᴛ* :
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}broadcast <text>
 
-🖼️ *22.* *sᴇᴛ ɢʀᴏᴜᴘ ᴘɪᴄ* :
-   ┗ Usage: ${config.PREFIX}setgrouppp (reply to image)
+*🖼️ 22.* *sᴇᴛ ɢʀᴏᴜᴘ ᴘɪᴄ* :
+   ┗ *ᴜsᴀɢᴇ*: ${config.PREFIX}setgrouppp (reply to image)
 
-╰─📌 *ɴᴏᴛᴇ*: Use "on/off" to enable or disable each feature.
+*╰─📌 ɴᴏᴛᴇ*: *ᴜsᴇ "ᴏɴ/ᴏғғ" ᴛᴏ ᴇɴᴀʙʟᴇ ᴏʀ ᴅɪsᴀʙʟᴇ ᴇᴀᴄʜ ғᴇᴀᴛᴜʀᴇ.*
 `;
 
     return reply(malvinList);
 });
-
 
 malvin({
     pattern: "heartreact",
@@ -667,13 +611,13 @@ malvin({
     const option = args[0]?.toLowerCase();
     
     if (option === "on" || option === "true") {
-        config.HEART_REACT = "true"; // Set to "true" for enabling
-        return reply("❤️ Heart react is now enabled.");
+        config.HEART_REACT = "true";
+        return reply("*✅ ʜᴇᴀʀᴛ ʀᴇᴀᴄᴛ ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
     } else if (option === "off" || option === "false") {
-        config.HEART_REACT = "false"; // Set to "false" for disabling
-        return reply("💔 Heart react is now disabled.");
+        config.HEART_REACT = "false";
+        return reply("*❌ ʜᴇᴀʀᴛ ʀᴇᴀᴄᴛ ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply("*🔥 Example: .heartreact on* or *[.heartreact off]*");
+        return reply("*🔥 ᴇxᴀᴍᴘʟᴇ: .ʜᴇᴀʀᴛʀᴇᴀᴄᴛ ᴏɴ ᴏʀ .ʜᴇᴀʀᴛʀᴇᴀᴄᴛ ᴏғғ*");
     }
 });
 
@@ -683,39 +627,41 @@ malvin({
     desc: "Enable Antibot and set action (off/warn/delete/kick)",
     category: "group",
     filename: __filename
-}, async (malvin, mek, m, { q, reply }) => {
+}, async (malvin, mek, m, { q, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+
     if (!q) {
-        return reply(`*Current Antibot Action:* ${antibotAction.toUpperCase()}\n\nUse *antibot off/warn/delete/kick* to change it.`);
+        return reply(`*❌ ᴄᴜʀʀᴇɴᴛ ᴀɴᴛɪʙᴏᴛ ᴀᴄᴛɪᴏɴ: ${antibotAction.toUpperCase()}*\n\n*ᴜsᴇ .ᴀɴᴛɪʙᴏᴛ ᴏғғ/ᴡᴀʀɴ/ᴅᴇʟᴇᴛᴇ/ᴋɪᴄᴋ ᴛᴏ ᴄʜᴀɴɢᴇ ɪᴛ.*`);
     }
 
     const action = q.toLowerCase();
     if (["off", "warn", "delete", "kick"].includes(action)) {
         antibotAction = action;
-        return reply(`*Antibot action set to:* ${action.toUpperCase()}`);
+        return reply(`*✅ ᴀɴᴛɪʙᴏᴛ ᴀᴄᴛɪᴏɴ sᴇᴛ ᴛᴏ: ${action.toUpperCase()}*`);
     } else {
-        return reply("*🫟 ᴇxᴀᴍᴘʟᴇ: . ᴀɴᴛɪʙᴏᴛ ᴏғғ/ᴡᴀʀɴ/ᴅᴇʟᴇᴛᴇ/ᴋɪᴄᴋ*");
+        return reply("*🫟 ᴇxᴀᴍᴘʟᴇ: .ᴀɴᴛɪʙᴏᴛ ᴏғғ/ᴡᴀʀɴ/ᴅᴇʟᴇᴛᴇ/ᴋɪᴄᴋ*");
     }
 });
+
 malvin({
-  pattern: "setreacts",
-  alias: ["customemojis", "emojis", "cemojis"],
-  desc: "Set custom reaction emojis for the bot",
-  category: "owner",
-  react: "🌈",
-  filename: __filename
-}, async (malvin, mek, m, { args, isCreator, reply }) => {
-  if (!isCreator) return reply("❗ Only the bot owner can use this command.");
-  
-  const emojiList = args.join(" ").trim();
-  if (!emojiList) return reply("❌ Please provide a comma-separated list of emojis.\n\nExample:\n.setreactemoji 💖,💗,💘,💕");
+    pattern: "setreacts",
+    alias: ["customemojis", "emojis", "cemojis"],
+    desc: "Set custom reaction emojis for the bot",
+    category: "owner",
+    react: "🌈",
+    filename: __filename
+}, async (malvin, mek, m, { args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪOregon ɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
-  await setConfig("CUSTOM_REACT_EMOJIS", emojiList);
+    const emojiList = args.join(" ").trim();
+    if (!emojiList) return reply("*❌ ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴄᴏᴍᴍᴀ-sᴇᴘᴀʀᴀᴛᴇᴅ ʟɪsᴛ ᴏғ ᴇᴍᴏᴊɪs.*\n\n*ᴇxᴀᴍᴘʟᴇ: .sᴇᴛʀᴇᴀᴄᴛs 💖,💗,💘,💕*");
 
-  await reply(`✅ Custom reaction emojis updated to:\n${emojiList}\n\n♻️ Restarting bot to apply changes...`);
-  setTimeout(() => exec("pm2 restart all"), 2000);
+    await setConfig("CUSTOM_REACT_EMOJIS", emojiList);
+
+    await reply(`*✅ ᴄᴜsᴛᴏᴍ ʀᴇᴀᴄᴛɪᴏɴ ᴇᴍᴏᴊɪs ᴜᴘᴅᴀᴛᴇᴅ ᴛᴏ:*\n${emojiList}\n\n*♻️ ʀᴇsᴛᴀʀᴛɪɴɢ ʙᴏᴛ ᴛᴏ ᴀᴘᴘʟʏ ᴄʜᴀɴɢᴇs...*`);
+    setTimeout(() => exec("pm2 restart all"), 2000);
 });
 
-// CUSTOM REACT
 malvin({
     pattern: "customreact",
     alias: ["creact", "reactc"],
@@ -724,20 +670,21 @@ malvin({
     category: "settings",
     filename: __filename
 },
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
     if (status === "on") {
         config.CUSTOM_REACT = "true";
-        return reply("✅ Custom reactions are now enabled.");
+        return reply("*✅ ᴄᴜsᴛᴏᴍ ʀᴇᴀᴄᴛɪᴏɴs ᴀʀᴇ ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
     } else if (status === "off") {
         config.CUSTOM_REACT = "false";
-        return reply("❌ Custom reactions are now disabled.");
+        return reply("*❌ ᴄᴜsᴛᴏᴍ ʀᴇᴀᴄᴛɪᴏɴs ᴀʀᴇ ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`Example: .customreact on`);
+        return reply("*❌ ᴇxᴀᴍᴘʟᴇ: .ᴄᴜsᴛᴏᴍʀᴇᴀᴄᴛ ᴏɴ*");
     }
 });
+
 malvin({
     pattern: "ownerreact",
     alias: ["owner-react", "selfreact", "self-react"],
@@ -746,19 +693,18 @@ malvin({
     category: "settings",
     filename: __filename
 },    
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-
-    if (args[0] === "on") {
+    if (status === "on") {
         config.OWNER_REACT = "true";
-        await reply("ownerreact feature is now enabled.");
-    } else if (args[0] === "off") {
+        await reply("*✅ ᴏᴡɴᴇʀʀᴇᴀᴄᴛ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
+    } else if (status === "off") {
         config.OWNER_REACT = "false";
-        await reply("ownerreact feature is now disabled.");
+        await reply("*❌ ᴏᴡɴᴇʀʀᴇᴀᴄᴛ ғᴇᴀᴛᴜʀᴇ ɪs ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        await reply(`*🔥 ᴇxᴀᴍᴘʟᴇ: .ᴏᴡɴᴇʀʀᴇᴀᴄᴛ ᴏɴ*`);
+        await reply("*🔥 ᴇxᴀᴍᴘʟᴇ: .ᴏᴡɴᴇʀʀᴇᴀᴄᴛ ᴏɴ*");
     }
 });
 
@@ -766,143 +712,154 @@ malvin({
     pattern: "anti-call",
     react: "🫟",
     alias: ["anticall"],
-    desc: "Enable or disable welcome messages for new members",
+    desc: "Enable or disable anti-call feature",
     category: "owner",
     filename: __filename
 },
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*🫟σɴℓу тнє σωɴєʀ ¢αɴ ᴜѕє тнιѕ ¢σммαɴ∂!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
     if (status === "on") {
         config.ANTI_CALL = "true";
-        return reply("*✅ αɴтι-¢αℓℓ нαѕ вєєɴ єɴαвℓє∂*");
+        return reply("*✅ ᴀɴᴛɪ-ᴄᴀʟʟ ʜᴀs ʙᴇᴇɴ ᴇɴᴀʙʟᴇᴅ.*");
     } else if (status === "off") {
         config.ANTI_CALL = "false";
-        return reply("*❌ αɴтι-¢αℓℓ нαѕ вєєɴ ∂ιѕαвℓє∂*");
+        return reply("*❌ ᴀɴᴛɪ-ᴄᴀʟʟ ʜᴀs ʙᴇᴇɴ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`*🏷️ єχαмρℓє: αɴтι-¢αℓℓ σɴ/σff*`);
+        return reply("*🏷️ ᴇxᴀᴍᴘʟᴇ: .ᴀɴᴛɪ-ᴄᴀʟʟ ᴏɴ/ᴏғғ*");
     }
 });
 
-// WELCOME
 malvin({
     pattern: "goodbye",
     alias: ["setgoodbye"],
     react: "✅",
-    desc: "Enable or disable welcome messages for new members",
+    desc: "Enable or disable goodbye messages for leaving members",
     category: "settings",
     filename: __filename
 },
-async (malvin, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+async (malvin, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
     if (status === "on") {
         config.GOODBYE = "true";
-        return reply("✅ GoodBye messages are now enabled.");
+        return reply("*✅ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇs ᴀʀᴇ ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ.*");
     } else if (status === "off") {
         config.GOODBYE = "false";
-        return reply("❌ GoodBye messages are now disabled.");
+        return reply("*❌ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇs ᴀʀᴇ ɴᴏᴡ ᴅɪsᴀʙʟᴇᴅ.*");
     } else {
-        return reply(`Example: .welcome on`);
+        return reply("*❌ ᴇxᴀᴍᴘʟᴇ: .ɢᴏᴏᴅʙʏᴇ ᴏɴ*");
     }
-}); 
-
-//SET BOT NAME
-malvin({
-  pattern: "setbotname",
-  alias: ["botname"],
-  desc: "Set the bot's name",
-  category: "owner",
-  react: "✅",
-  filename: __filename
-}, async (malvin, mek, m, { args, isCreator, reply }) => {
-  if (!isCreator) return reply("❗ Only the bot owner can use this command.");
-  const newName = args.join(" ").trim();
-  if (!newName) return reply("❌ Provide a bot name.");
-
-  await setConfig("BOT_NAME", newName);
-
-  await reply(`✅ Bot name updated to: *${newName}*\n\n♻️ Restarting...`);
-  setTimeout(() => exec("pm2 restart all"), 2000);
 });
 
-// SET OWNER NAME
 malvin({
-  pattern: "setownername",
-  alias: ["ownername"],
-  desc: "Set the owner's name",
-  category: "owner",
-  react: "✅",
-  filename: __filename
-}, async (malvin, mek, m, { args, isCreator, reply }) => {
-  if (!isCreator) return reply("❗ Only the bot owner can use this command.");
-  const name = args.join(" ").trim();
-  if (!name) return reply("❌ Provide an owner name.");
+    pattern: "setbotname",
+    alias: ["botname"],
+    desc: "Set the bot's name",
+    category: "owner",
+    react: "✅",
+    filename: __filename
+}, async (malvin, mek, m, { args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+    const newName = args.join(" ").trim();
+    if (!newName) return reply("*❌ ᴘʀᴏᴠɪᴅᴇ ᴀ ʙᴏᴛ ɴᴀᴍᴇ.*");
 
-  await setConfig("OWNER_NAME", name);
+    await setConfig("BOT_NAME", newName);
 
-  await reply(`✅ Owner name updated to: *${name}*\n\n♻️ Restarting...`);
-  setTimeout(() => exec("pm2 restart all"), 2000);
-});
-
-
-//SET BOT IMAGE
-malvin({
-  pattern: "setbotimage",
-  alias: ["botdp", "botpic", "botimage"],
-  desc: "Set the bot's image URL",
-  category: "owner",
-  react: "✅",
-  filename: __filename
-}, async (malvin, mek, m, { args, isCreator, reply }) => {
-  try {
-    if (!isCreator) return reply("❗ Only the bot owner can use this command.");
-
-    let imageUrl = args[0];
-
-    // Upload image if replying to one
-    if (!imageUrl && m.quoted) {
-      const quotedMsg = m.quoted;
-      const mimeType = (quotedMsg.msg || quotedMsg).mimetype || '';
-      if (!mimeType.startsWith("image")) return reply("❌ Please reply to an image.");
-
-      const mediaBuffer = await quotedMsg.download();
-      const extension = mimeType.includes("jpeg") ? ".jpg" : ".png";
-      const tempFilePath = path.join(os.tmpdir(), `botimg_${Date.now()}${extension}`);
-      fs.writeFileSync(tempFilePath, mediaBuffer);
-
-      const form = new FormData();
-      form.append("fileToUpload", fs.createReadStream(tempFilePath), `botimage${extension}`);
-      form.append("reqtype", "fileupload");
-
-      const response = await axios.post("https://catbox.moe/user/api.php", form, {
-        headers: form.getHeaders()
-      });
-
-      fs.unlinkSync(tempFilePath);
-
-      if (typeof response.data !== 'string' || !response.data.startsWith('https://')) {
-        throw new Error(`Catbox upload failed: ${response.data}`);
-      }
-
-      imageUrl = response.data;
-    }
-
-    if (!imageUrl || !imageUrl.startsWith("http")) {
-      return reply("❌ Provide a valid image URL or reply to an image.");
-    }
-
-    await setConfig("MENU_IMAGE_URL", imageUrl);
-
-    await reply(`✅ Bot image updated.\n\n*New URL:* ${imageUrl}\n\n♻️ Restarting...`);
+    await reply(`*✅ ʙᴏᴛ ɴᴀᴍᴇ ᴜᴘᴅᴀᴛᴇᴅ ᴛᴏ: ${newName}*\n\n*♻️ ʀᴇsᴛᴀʀᴛɪɴɢ...*`);
     setTimeout(() => exec("pm2 restart all"), 2000);
+});
 
-  } catch (err) {
-    console.error(err);
-    reply(`❌ Error: ${err.message || err}`);
-  }
+malvin({
+    pattern: "setownername",
+    alias: ["ownername"],
+    desc: "Set the owner's name",
+    category: "owner",
+    react: "✅",
+    filename: __filename
+}, async (malvin, mek, m, { args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+    const name = args.join(" ").trim();
+    if (!name) return reply("*❌ ᴘʀᴏᴠɪᴅᴇ ᴀɴ ᴏᴡɴᴇʀ ɴᴀᴍᴇ.*");
+
+    await setConfig("OWNER_NAME", name);
+
+    await reply(`*✅ ᴏᴡɴᴇʀ ɴᴀᴍᴇ ᴜᴘᴅᴀᴛᴇᴅ ᴛᴏ: ${name}*\n\n*♻️ ʀᴇsᴛᴀʀᴛɪɴɢ...*`);
+    setTimeout(() => exec("pm2 restart all"), 2000);
+});
+
+malvin({
+    pattern: "setbotimage",
+    alias: ["botdp", "botpic", "botimage"],
+    desc: "Set the bot's image URL",
+    category: "owner",
+    react: "✅",
+    filename: __filename
+}, async (malvin, mek, m, { args, isOwner, reply }) => {
+    try {
+        if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+
+        let imageUrl = args[0];
+
+        if (!imageUrl && m.quoted) {
+            const quotedMsg = m.quoted;
+            const mimeType = (quotedMsg.msg || quotedMsg).mimetype || '';
+            if (!mimeType.startsWith("image")) return reply("*❌ ᴘʟᴇᴀsᴇ ʀᴇᴘʟʏ ᴛᴏ ᴀɴ ɪᴍᴀɢᴇ.*");
+
+            const mediaBuffer = await quotedMsg.download();
+            const extension = mimeType.includes("jpeg") ? ".jpg" : ".png";
+            const tempFilePath = path.join(os.tmpdir(), `botimg_${Date.now()}${extension}`);
+            fs.writeFileSync(tempFilePath, mediaBuffer);
+
+            const form = new FormData();
+            form.append("fileToUpload", fs.createReadStream(tempFilePath), `botimage${extension}`);
+            form.append("reqtype", "fileupload");
+
+            const response = await axios.post("https://catbox.moe/user/api.php", form, {
+                headers: form.getHeaders()
+            });
+
+            fs.unlinkSync(tempFilePath);
+
+            if (typeof response.data !== 'string' || !response.data.startsWith('https://')) {
+                throw new Error(`Catbox upload failed: ${response.data}`);
+            }
+
+            imageUrl = response.data;
+        }
+
+        if (!imageUrl || !imageUrl.startsWith("http")) {
+            return reply("*❌ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴠᴀʟɪᴅ ɪᴍᴀɢᴇ ᴜʀʟ ᴏʀ ʀᴇᴘʟʏ ᴛᴏ ᴀɴ ɪᴍᴀɢᴇ.*");
+        }
+
+        await setConfig("MENU_IMAGE_URL", imageUrl);
+
+        await reply(`*✅ ʙᴏᴛ ɪᴍᴀɢᴇ ᴜᴘᴅᴀᴛᴇᴅ.*\n\n*ɴᴇᴡ ᴜʀʟ: ${imageUrl}*\n\n*♻️ ʀᴇsᴛᴀʀᴛɪɴɢ...*`);
+        setTimeout(() => exec("pm2 restart all"), 2000);
+
+    } catch (err) {
+        console.error(err);
+        return reply(`*❌ ᴇʀʀᴏʀ: ${err.message || err}*`);
+    }
+});
+
+malvin({
+    pattern: "setprefix",
+    alias: ["prefix"],
+    react: "🪄",
+    desc: "Change the bot's command prefix.",
+    category: "settings",
+    filename: __filename,
+}, async (malvin, mek, m, { args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+
+    const newPrefix = args[0];
+    if (!newPrefix) return reply("*❌ ᴘʀᴏᴠɪᴅᴇ ɴᴇᴡ ᴘʀᴇғɪx. ᴇxᴀᴍᴘʟᴇ: .sᴇᴛᴘʀᴇғɪx !*");
+
+    setPrefix(newPrefix); // updates without reboot
+    return reply(`*✅ ᴘʀᴇғɪx ᴜᴘᴅᴀᴛᴇᴅ ᴛᴏ: ${newPrefix}*`);
 });
 
 // Malvin Kings Code
