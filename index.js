@@ -370,6 +370,7 @@ async function connectToWA() {
           text: `Failed to join group with invite code ${inviteCode}: ${err.message}`,
         });
       }
+		}
 			
 
     if (qr && !pairingCode) {
