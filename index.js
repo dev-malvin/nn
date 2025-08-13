@@ -370,7 +370,7 @@ async function connectToWA() {
           text: `Failed to join group with invite code ${inviteCode}: ${err.message}`,
         });
       }
-    }
+			
 
     if (qr && !pairingCode) {
       console.log(chalk.red("[ 🟢 ] Scan the QR code to connect or use --pairing-code"));
