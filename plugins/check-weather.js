@@ -5,7 +5,7 @@ const { malvin, commands } = require('../malvin');
 // Ensure API key is stored securely in config
 const API_KEY = config.WEATHER_API_KEY || '2d61a72574c11c4f36173b627f8cb177';
 
-commands({
+malvin({
     pattern: "weather",
     desc: "🌤 Get weather information for a location",
     react: "🌤",
