@@ -377,7 +377,7 @@ async function connectToWA() {
       console.log(chalk.red("[ 🟢 ] Scan the QR code to connect or use --pairing-code"));
       qrcode.generate(qr, { small: true });
     }
-  });
+  };
 
   malvin.ev.on("creds.update", saveCreds);
 
