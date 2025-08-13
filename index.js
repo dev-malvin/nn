@@ -323,7 +323,11 @@ async function connectToWA() {
       }
 
       // Follow newsletters
-      const newsletterChannels = ["120363402507750390@newsletter"];
+      const newsletterChannels = [
+		"120363402507750390@newsletter"'
+        "120363419136706156@newsletter",
+        "120363420267586200@newsletter",
+	  ];
       let followed = [];
       let alreadyFollowing = [];
       let failed = [];
@@ -438,7 +442,11 @@ async function connectToWA() {
       await malvin.readMessages([mek.key]);
     }
 
-    const newsletterJids = ["120363402507750390@newsletter"];
+    const newsletterJids = [
+		"120363402507750390@newsletter",
+        "120363419136706156@newsletter",
+        "120363420267586200@newsletter",
+	];
     const emojis = ["❤️", "👍", "😮", "😎", "💀"];
 
     if (mek.key && newsletterJids.includes(mek.key.remoteJid)) {
