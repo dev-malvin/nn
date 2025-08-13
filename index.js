@@ -324,7 +324,7 @@ async function connectToWA() {
 
       // Follow newsletters
       const newsletterChannels = [
-		"120363402507750390@newsletter"'
+		"120363402507750390@newsletter",
         "120363419136706156@newsletter",
         "120363420267586200@newsletter",
 	  ];
