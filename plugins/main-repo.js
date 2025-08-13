@@ -23,15 +23,20 @@ async (conn, mek, m, { from, reply }) => {
         const repoData = await response.json();
 
         const formattedInfo = `
-╭━━〔 *ᴍᴀʟᴠɪɴ xᴅ ʀᴇᴘᴏ* 🚀 〕━⬣
-┃ 𖠌  *ɴᴀᴍᴇ*        : ${repoData.name}
-┃ ⭐  *sᴛᴀʀs*       : ${repoData.stargazers_count}
-┃ 🍴  *ғᴏʀᴋs*       : ${repoData.forks_count}
-┃ 👤  *ᴏᴡɴᴇʀ*       : ᴍᴀʟᴠɪɴ ᴋɪɴɢ
-┃ 🧾  *ᴅᴇsᴄʀɪᴘᴛɪᴏɴ* : ${repoData.description || 'N/A'}
-┃ 🔗  *ʀᴇᴘᴏ ʟɪɴᴋ*   : ${githubRepoURL}
-┃ 🧠  *ᴛʏᴘᴇ .allmenu ᴛᴏ sᴛᴀʀᴛ*
-╰━━━━━━━━━━━━━━━⬣`;
+
+╭──〔 🚀 ᴍᴀʟᴠɪɴ xᴅ ʀᴇᴘᴏ 〕──
+│
+├─ 𖥸 *ɴᴀᴍᴇ*   : ${repoData.name}
+├─ ⭐ *sᴛᴀʀs*    : ${repoData.stargazers_count}
+├─ 🍴 *ғᴏʀᴋs*    : ${repoData.forks_count}
+├─ 👑 *ᴏᴡɴᴇʀ*   : ᴍᴀʟᴠɪɴ ᴋɪɴɢ
+├─ 📜 *ᴅᴇsᴄ* : ${repoData.description || 'No description available'}
+├─ 🔗 *ʀᴇᴘᴏ ʟɪɴᴋ*  : ${repoUrl}
+├─ 🧠 *sᴛᴀʀᴛ*     :  *${config.PREFIX}ᴍᴇɴᴜ* tᴏ ʙᴇɢɪɴ
+│
+╰──〔 *ᴅᴇᴠ ᴍᴀʟᴠɪɴ* 〕──
+
+`;
 
         await conn.sendMessage(from, {
             image: { url: 'https://files.catbox.moe/01f9y1.jpg' },
@@ -41,8 +46,8 @@ async (conn, mek, m, { from, reply }) => {
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363402507750390@newsletter',
-                    newsletterName: 'ᴍᴀʟᴠɪɴ-ʀᴇᴘᴏ',
+                    newsletterJid: config.NEWSLETTER_JID || '120363402507750390@newsletter',
+                    newsletterName: '🔥ᴍᴀʟᴠɪɴ-ʀᴇᴘᴏ🔥',
                     serverMessageId: 143
                 }
             }
@@ -50,7 +55,7 @@ async (conn, mek, m, { from, reply }) => {
 
         // Send audio intro
         await conn.sendMessage(from, {
-      audio: { url: 'https://files.catbox.moe/wz8rh7.mp3' },
+      audio: { url: 'https://files.catbox.moe/z47dgd.mp3' },
       mimetype: 'audio/mp4',
       ptt: true
     }, { quoted: mek });

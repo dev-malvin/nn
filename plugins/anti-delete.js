@@ -3,12 +3,12 @@ const { getAnti, setAnti } = require('../data/antidel');
 
 malvin({
     pattern: "antidelete",
-    alias: ['antidel'],
+    alias: ['antidel', 'ad'],
     desc: "Toggle anti-delete feature",
-    category: "settings",
+    category: "misc",
     filename: __filename
 },
-async (malvin, mek, m, { from, reply, text, isCreator }) => {
+async (conn, mek, m, { from, reply, text, isCreator }) => {
     if (!isCreator) return reply('This command is only for the bot owner');
     
     try {

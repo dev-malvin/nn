@@ -2,8 +2,8 @@ const axios = require("axios");
 const { malvin } = require("../malvin");
 
 malvin({
-  pattern: "mediafire2",
-  alias: ["mfire2", "mfdownload2"],
+  pattern: "mediafire",
+  alias: ["mfire", "mfdownload"],
   react: '📥',
   desc: "Download files from MediaFire.",
   category: "download",
@@ -123,8 +123,8 @@ malvin({
 /// MEDIAFIRE 2
 
 malvin({
-  pattern: "mediafire",
-  alias: ["mfire", "media"],
+  pattern: "mediafire2",
+  alias: ["mfire2", "media"],
   react: '📂',
   desc: "Download files from MediaFire using Keith's API.",
   category: "download",

@@ -44,15 +44,15 @@ malvin({
 
     // Stylish info message before sending
     await reply(
-      `📥 *Downloading repository...*\n\n` +
-      `╭─❍ ** ❍─╮\n` +
-      `┃\n` +
-      `┃ *Repository:* ${username}/${repo}\n` +
-      `┃ *Filename:* ${fileName}\n` +
-      `┃\n` +
-      `╰─⟤\n\n` +
-      `*Powered by Malvin King* 👑\n`
-    );
+  `📥 *Downloading Repository...*\n\n` +
+  `╭──〔 📂 ʀᴇᴘᴏ ᴅᴏᴡɴʟᴏᴀᴅ 〕──\n` +
+  `│\n` +
+  `├─ 📑 ʀᴇᴘᴏsɪᴛᴏʀʏ: ${username}/${repo}\n` +
+  `├─ 📄 ғɪʟᴇ: ${fileName}\n` +
+  `│\n` +
+  `╰───〔 📥 〕───\n` +
+  `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴀʟᴠɪɴ ᴋɪɴɢ 👑`
+);
 
     // Send the zip file document with some custom contextInfo flair
     await malvin.sendMessage(from, {
