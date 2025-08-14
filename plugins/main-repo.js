@@ -31,7 +31,7 @@ async (conn, mek, m, { from, reply }) => {
 ├─ 🍴 *ғᴏʀᴋs*    : ${repoData.forks_count}
 ├─ 👑 *ᴏᴡɴᴇʀ*   : ᴍᴀʟᴠɪɴ ᴋɪɴɢ
 ├─ 📜 *ᴅᴇsᴄ* : ${repoData.description || 'No description available'}
-├─ 🔗 *ʀᴇᴘᴏ ʟɪɴᴋ*  : ${repoUrl}
+├─ 🔗 *ʀᴇᴘᴏ ʟɪɴᴋ*  : ${githubRepoURL}
 ├─ 🧠 *sᴛᴀʀᴛ*     :  *${config.PREFIX}ᴍᴇɴᴜ* tᴏ ʙᴇɢɪɴ
 │
 ╰──〔 *ᴅᴇᴠ ᴍᴀʟᴠɪɴ* 〕──
