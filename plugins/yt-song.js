@@ -109,15 +109,16 @@ malvin(
 │   ᴜsᴇ ᴡɪsᴇʟʏ, ᴍᴀʟᴠɪɴ xᴅ ɪs ɴᴏᴛ
 │   ʀᴇsᴘᴏɴsɪʙʟᴇ ғᴏʀ ᴀɴʏ ɪssᴜᴇs.
 │
-╰──〔 ✨ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴀʟᴠɪɴ xᴅ 〕──`;
+╰──〔 ✨ ᴍᴀʟᴠɪɴ xᴅ 〕──`;
+
+            // Generate unique session ID (no temporary message needed)
+            const sessionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
             // Create buttons message
-            const sentMsg = await malvin.sendMessage(mek.chat, { text: caption }, { quoted: mek }); // Temporary message to get messageId
-            const sessionId = `${sentMsg.key.id}-${Date.now()}`; // Unique session ID using message ID + timestamp
             const buttonsMessage = {
                 image: thumbnailBuffer,
                 caption,
-                footer: Config.FOOTER || '𝚙𝚘𝚠𝚎𝚛𝚎𝚍 𝚋𝚢 𝚖𝚊𝚕𝚟𝚒𝚗-𝚡𝚍',
+                footer: Config.FOOTER || '> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴀʟᴠɪɴ xᴅ ',
                 buttons: [
                     {
                         buttonId: `song-audio-${sessionId}-${videoUrl}`,
